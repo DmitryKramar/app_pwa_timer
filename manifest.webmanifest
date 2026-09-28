@@ -1,0 +1,39 @@
+{
+  "name": "Таймер",
+  "short_name": "Таймер",
+  "description": "Таймер обратного отсчёта с напоминаниями и сохранёнными сценариями. Работает оффлайн.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/app/timer/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d1024",
+  "theme_color": "#0d1024",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

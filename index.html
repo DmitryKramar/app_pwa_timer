@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Таймер</title>
+  <meta name="description" content="Таймер обратного отсчёта с напоминаниями и сценариями" />
+  <meta name="theme-color" content="#0d1024" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Таймер" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="flash" class="flash" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-icon" src="icons/icon.svg" alt="" width="36" height="36" />
+        <h1>Таймер</h1>
+      </div>
+      <button id="notifyBtn" class="ghost-btn" type="button">Включить уведомления</button>
+    </header>
+
+    <main>
+      <section class="card timer-card">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cff" />
+                <stop offset="100%" stop-color="#22d3ee" />
+              </linearGradient>
+            </defs>
+            <circle class="ring-track" cx="100" cy="100" r="90" />
+            <circle id="ringProgress" class="ring-progress" cx="100" cy="100" r="90" />
+          </svg>
+          <div class="ring-center">
+            <div id="digits" class="digits" role="timer" aria-live="polite">00:00:00</div>
+            <div id="statusLabel" class="status">Задайте время</div>
+          </div>
+        </div>
+
+        <div id="reminderBadge" class="reminder-badge" hidden>Напоминание</div>
+
+        <div class="controls">
+          <button id="btnStart" class="btn btn-primary" type="button">Старт</button>
+          <button id="btnPause" class="btn btn-secondary" type="button" disabled>Пауза</button>
+          <button id="btnReset" class="btn btn-secondary" type="button">Сброс</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Общее время</h2>
+        <div class="time-inputs">
+          <label class="field">
+            <span>Часы</span>
+            <input id="inHours" type="number" inputmode="numeric" min="0" max="99" step="1" value="0" />
+          </label>
+          <label class="field">
+            <span>Минуты</span>
+            <input id="inMinutes" type="number" inputmode="numeric" min="0" max="59" step="1" value="25" />
+          </label>
+          <label class="field">
+            <span>Секунды</span>
+            <input id="inSeconds" type="number" inputmode="numeric" min="0" max="59" step="1" value="0" />
+          </label>
+        </div>
+        <div class="presets">
+          <button class="chip" type="button" data-preset="60">1 мин</button>
+          <button class="chip" type="button" data-preset="300">5 мин</button>
+          <button class="chip" type="button" data-preset="600">10 мин</button>
+          <button class="chip" type="button" data-preset="1500">25 мин</button>
+          <button class="chip" type="button" data-preset="3600">1 час</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Напоминания</h2>
+
+        <label class="switch-row">
+          <span class="switch-text">
+            <span class="switch-title">Напоминать во время отсчёта</span>
+            <span class="switch-sub">Сигнал, вибрация и вспышка через равные промежутки</span>
+          </span>
+          <span class="switch">
+            <input id="remindToggle" type="checkbox" />
+            <span class="switch-slider"></span>
+          </span>
+        </label>
+
+        <div id="remindIntervalWrap" class="interval-row is-disabled">
+          <label class="field field-inline">
+            <span>Каждые N минут</span>
+            <input id="remindInterval" type="number" inputmode="numeric" min="1" max="999" step="1" value="5" disabled />
+          </label>
+        </div>
+
+        <p id="notifyHint" class="hint">Системные уведомления не включены.</p>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Сценарии</h2>
+
+        <div class="save-row">
+          <input id="scenarioName" type="text" maxlength="60" placeholder="Название сценария" />
+          <button id="btnSave" class="btn btn-primary" type="button">Сохранить</button>
+        </div>
+
+        <p id="emptyHint" class="hint">Пока нет сохранённых сценариев.</p>
+        <ul id="scenarioList" class="scenario-list"></ul>
+      </section>
+    </main>
+
+    <footer class="footer">Оффлайн-приложение. Данные хранятся только на этом устройстве.</footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
