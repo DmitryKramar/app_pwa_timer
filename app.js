@@ -35,6 +35,8 @@
     running: false,
     endTime: 0,
     timerId: 0,
+    finishTimerId: 0,
+    finished: false,
     lastReminderIndex: 0
   };
 
@@ -258,20 +260,27 @@
     }
   }
 
+  function finish() {
+    if (state.finished) return;
+    state.finished = true;
+    state.running = false;
+    window.clearInterval(state.timerId);
+    window.clearTimeout(state.finishTimerId);
+    state.remainingMs = 0;
+    renderTime();
+    updateRing();
+    updateControls();
+    els.status.textContent = 'Время вышло';
+    document.title = 'Время вышло — Таймер';
+    fireFinish();
+  }
+
   function tick() {
     if (!state.running) return;
     state.remainingMs = state.endTime - Date.now();
 
     if (state.remainingMs <= 0) {
-      state.remainingMs = 0;
-      state.running = false;
-      window.clearInterval(state.timerId);
-      renderTime();
-      updateRing();
-      updateControls();
-      els.status.textContent = 'Время вышло';
-      document.title = 'Время вышло — Таймер';
-      fireFinish();
+      finish();
       return;
     }
 
@@ -293,12 +302,15 @@
 
     ensureAudio();
     state.running = true;
+    state.finished = false;
     state.endTime = Date.now() + state.remainingMs;
     state.lastReminderIndex = currentReminderIndex();
     clearReminderVisual();
 
     window.clearInterval(state.timerId);
+    window.clearTimeout(state.finishTimerId);
     state.timerId = window.setInterval(tick, 200);
+    state.finishTimerId = window.setTimeout(finish, state.remainingMs + 50);
 
     els.status.textContent = 'Идёт отсчёт';
     updateControls();
@@ -310,6 +322,7 @@
     state.remainingMs = Math.max(0, state.endTime - Date.now());
     state.running = false;
     window.clearInterval(state.timerId);
+    window.clearTimeout(state.finishTimerId);
     els.status.textContent = 'Пауза';
     updateControls();
     renderTime();
@@ -320,9 +333,11 @@
   function reset() {
     state.running = false;
     window.clearInterval(state.timerId);
+    window.clearTimeout(state.finishTimerId);
     state.totalMs = readInputsMs();
     state.remainingMs = state.totalMs;
     state.lastReminderIndex = 0;
+    state.finished = false;
     clearReminderVisual();
     renderTime();
     updateRing();
@@ -444,6 +459,7 @@
 
     state.running = false;
     window.clearInterval(state.timerId);
+    window.clearTimeout(state.finishTimerId);
     clearReminderVisual();
 
     els.remindToggle.checked = !!item.remind;
@@ -625,7 +641,16 @@
   });
 
   document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && state.running) tick();
+    if (state.running) {
+      if (document.hidden) {
+        /* Вкладка ушла в фон: UI-тики браузер замедлит, но finish-таймер
+           (setTimeout на endTime) и Notification продолжат работать.
+           Ничего делать не нужно — догон сделает tick при возврате. */
+      } else {
+        /* Вернулись: мгновенно пересчитываем и, если время вышло, добиваем финал */
+        tick();
+      }
+    }
   });
 
   /* ------------------------------------------------------------------ */
