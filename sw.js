@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-cache-v1';
+const CACHE_NAME = 'timer-cache-v2';
 
 const CORE_ASSETS = [
   './',
